@@ -29,9 +29,9 @@ class Appraiser
       total_tax = 0.0
       total_tax += calculate_percentage(10, product[:price] * product[:qty]) unless product_is_exempt?(product[:name])
       total_tax += calculate_percentage(5, product[:price] * product[:qty])
-      row.concat([total_tax])
+      row.concat([total_tax.round(2)])
     end
-    @file.push(['Sales Taxes', @file.map(&:last).reduce(:+)])
+    @file.push(['Sales Taxes', @file.map(&:last).reduce(:+).round(2)])
     @file.push(['Total', total_price])
     save_report
   end
