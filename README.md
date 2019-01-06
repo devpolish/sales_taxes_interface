@@ -1,5 +1,7 @@
 # Sales Taxes
 
+Classify products based in whole sentences, products belong to medical, food or books categories are exempt of 10% tax, a tax of 5% is applied to every single product without not exceptions.
+
 ## Usage
 
 ```ruby
