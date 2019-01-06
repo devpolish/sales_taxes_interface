@@ -8,6 +8,7 @@ require 'csv'
 require 'yaml'
 require 'modules/classifier'
 
+# Appraiser class taxes all products and save them into a CSV file.
 class Appraiser
   HEADERS = %w[quantity product price taxes].freeze
   EXEMPT_CATEGORIES = %w[medical food books].freeze
@@ -25,17 +26,19 @@ class Appraiser
   def appraise
     @file.collect! do |product|
       total_tax = 0.0
-      total_tax += calculate_percentage(10, product[2]) unless product_is_exempt?(product[1])
-      total_tax += calculate_percentage(5, product[2])
+      product_qty = product[0].to_i
+      total_tax += calculate_percentage(10, product[2] * product_qty) unless product_is_exempt?(product[1])
+      total_tax += calculate_percentage(5, product[2] * product_qty)
       product.concat([total_tax])
     end
+    @file.push(['Sales Taxes', @file.map(&:last).reduce(:+)])
+    @file.push(['Total', total_price])
     save_report
   end
 
   def save_report
     CSV.open(@file_output, 'wb') do |csv|
       csv << HEADERS
-      # Add extra column without unfrezee array
       @file.each { |row| csv << row }
     end
   rescue Errno::ENOENT => exception
@@ -47,6 +50,11 @@ class Appraiser
   end
 
   private
+
+  # Sum all normal prices with their respectives taxes
+  def total_price
+    @file.map { |f| f[2..3].map(&:to_f) }.flatten.reduce(:+)
+  end
 
   def product_is_exempt?(product_name)
     classification = classify(models, product_name)
