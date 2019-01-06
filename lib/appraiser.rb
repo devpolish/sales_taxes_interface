@@ -34,6 +34,7 @@ class Appraiser
 
   def save_report
     CSV.open(@file_output, 'wb') do |csv|
+      csv << HEADERS
       # Add extra column without unfrezee array
       @file.each { |row| csv << row }
     end
