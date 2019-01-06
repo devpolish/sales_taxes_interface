@@ -24,12 +24,12 @@ class Appraiser
   end
 
   def appraise
-    @file.collect! do |product|
+    @file.collect! do |row|
+      product = key_extractor(row)
       total_tax = 0.0
-      product_qty = product[0].to_i
-      total_tax += calculate_percentage(10, product[2] * product_qty) unless product_is_exempt?(product[1])
-      total_tax += calculate_percentage(5, product[2] * product_qty)
-      product.concat([total_tax])
+      total_tax += calculate_percentage(10, product[:price] * product[:qty]) unless product_is_exempt?(product[:name])
+      total_tax += calculate_percentage(5, product[:price] * product[:qty])
+      row.concat([total_tax])
     end
     @file.push(['Sales Taxes', @file.map(&:last).reduce(:+)])
     @file.push(['Total', total_price])
@@ -50,6 +50,14 @@ class Appraiser
   end
 
   private
+
+  def key_extractor(product)
+    {
+      qty: product[0].to_i,
+      name: product[1],
+      price: product[2].to_f
+    }
+  end
 
   # Sum all normal prices with their respectives taxes
   def total_price
