@@ -1,6 +1,6 @@
 # Sales Taxes
 
-## Usage
+## Usage
 
 ```ruby
   require_relative 'lib/appraiser'
