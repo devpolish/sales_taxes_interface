@@ -29,11 +29,11 @@ class Appraiser
       total_tax += calculate_percentage(5, product[2])
       product.concat([total_tax])
     end
-    save_report('output.csv')
+    save_report
   end
 
-  def save_report(pathname)
-    CSV.open(pathname, 'wb') do |csv|
+  def save_report
+    CSV.open(@file_output, 'wb') do |csv|
       # Add extra column without unfrezee array
       @file.each { |row| csv << row }
     end
